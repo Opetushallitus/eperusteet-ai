@@ -1,7 +1,9 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DokumenttiDto;
+import fi.vm.sade.eperusteet.eperusteetaiservice.util.PdfFileNotFoundException;
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;
 
 import java.io.File;
@@ -14,7 +16,11 @@ public abstract class ExternalService {
                 RestClient.create()
                     .get()
                     .uri(getDokumenttiDtoUrl(), id, kieli)
-                    .retrieve().body(DokumenttiDto.class);
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, (request, response) -> {
+                        throw new PdfFileNotFoundException();
+                    })
+                    .body(DokumenttiDto.class);
 
         if (dokumenttiDto == null) {
             return null;

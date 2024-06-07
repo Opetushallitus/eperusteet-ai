@@ -1,0 +1,416 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1",
+    "title" : "ePerusteetAI api"
+  },
+  "basePath" : "/eperusteet-ai-service",
+  "tags" : [ {
+    "name" : "Assistants"
+  }, {
+    "name" : "Chat"
+  }, {
+    "name" : "Files"
+  }, {
+    "name" : "Usage"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/assistants" : {
+      "get" : {
+        "tags" : [ "Assistants" ],
+        "operationId" : "getAssistants",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Assistant"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/add/{threadId}/{lahdeTyyppi}/{id}" : {
+      "post" : {
+        "tags" : [ "Chat" ],
+        "operationId" : "addMessage",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "lahdeTyyppi",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "prompt",
+          "in" : "query",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "kieli",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "default" : "fi"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Message"
+            }
+          }
+        }
+      }
+    },
+    "/chat/create" : {
+      "post" : {
+        "tags" : [ "Chat" ],
+        "operationId" : "createThread",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Thread"
+            }
+          }
+        }
+      }
+    },
+    "/chat/messages/{threadId}" : {
+      "get" : {
+        "tags" : [ "Chat" ],
+        "operationId" : "getMessages",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Message"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/run/{threadId}" : {
+      "post" : {
+        "tags" : [ "Chat" ],
+        "operationId" : "runThread",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "instructions",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "temperature",
+          "in" : "query",
+          "required" : false,
+          "type" : "number",
+          "format" : "double"
+        }, {
+          "name" : "topP",
+          "in" : "query",
+          "required" : false,
+          "type" : "number",
+          "format" : "double"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Run"
+            }
+          }
+        }
+      }
+    },
+    "/chat/thread/{threadId}/run/{runId}" : {
+      "post" : {
+        "tags" : [ "Chat" ],
+        "operationId" : "getRun",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "runId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Run"
+            }
+          }
+        }
+      }
+    },
+    "/files" : {
+      "get" : {
+        "tags" : [ "Files" ],
+        "operationId" : "getFiles",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/OpenAiFile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/upload/{lahdeTyyppi}/{id}" : {
+      "post" : {
+        "tags" : [ "Files" ],
+        "operationId" : "upload",
+        "parameters" : [ {
+          "name" : "lahdeTyyppi",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "kieli",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "default" : "fi"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/OpenAiFile"
+            }
+          }
+        }
+      }
+    },
+    "/usage" : {
+      "get" : {
+        "tags" : [ "Usage" ],
+        "operationId" : "getUsage",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "number",
+              "format" : "double"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Assistant" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "object" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "instructions" : {
+          "type" : "string"
+        },
+        "temperature" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "top_p" : {
+          "type" : "number",
+          "format" : "double"
+        }
+      }
+    },
+    "Attachment" : {
+      "type" : "object",
+      "properties" : {
+        "tools" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Tool"
+          }
+        },
+        "file_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Message" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string"
+        },
+        "role" : {
+          "type" : "string"
+        },
+        "content" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MessageContent"
+          }
+        },
+        "attachments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Attachment"
+          }
+        },
+        "thread_id" : {
+          "type" : "string"
+        },
+        "created_at" : {
+          "type" : "string"
+        }
+      }
+    },
+    "MessageContent" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "text" : {
+          "$ref" : "#/definitions/MessageText"
+        }
+      }
+    },
+    "MessageText" : {
+      "type" : "object",
+      "properties" : {
+        "value" : {
+          "type" : "string"
+        }
+      }
+    },
+    "OpenAiFile" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "bytes" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "filename" : {
+          "type" : "string"
+        },
+        "object" : {
+          "type" : "string"
+        },
+        "purpose" : {
+          "type" : "string"
+        },
+        "created_at" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "Run" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "instructions" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string"
+        },
+        "model" : {
+          "type" : "string"
+        },
+        "temperature" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "thread_id" : {
+          "type" : "string"
+        },
+        "assistant_id" : {
+          "type" : "string"
+        },
+        "top_p" : {
+          "type" : "number",
+          "format" : "double"
+        }
+      }
+    },
+    "Thread" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "messages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Message"
+          }
+        },
+        "created_at" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "Tool" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

@@ -14,6 +14,8 @@ public class Message {
     private String id;
     @JsonProperty("thread_id")
     private String threadId;
+    @JsonProperty("created_at")
+    private String createdAt;
     private String status;
     private String role;
     private List<MessageContent> content;

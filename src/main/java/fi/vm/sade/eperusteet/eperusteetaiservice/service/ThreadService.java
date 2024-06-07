@@ -5,8 +5,6 @@ import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.RunMessage;
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.RunRequest;
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.RunThread;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Thread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ThreadService {
@@ -37,6 +37,12 @@ public class ThreadService {
 
     @Value("${openai.model}")
     private String model;
+
+    @Value("${openai.api.default.temperature}")
+    private Double defaultTemperature;
+
+    @Value("${openai.api.default.top_p}")
+    private Double defaultTopP;
 
     public Thread createThread() {
         return openaiRestClient.post()
@@ -60,20 +66,29 @@ public class ThreadService {
         return openaiRestClient.get()
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .retrieve()
-                .body(new ParameterizedTypeReference<DataList<Message>>() {}).getData();
+                .body(new ParameterizedTypeReference<DataList<Message>>() {}).getData()
+                .stream().sorted(Comparator.comparing(Message::getCreatedAt)).toList();
     }
 
-    public Run runThread(String threadId) {
-        RunRequest runRequest = RunRequest.builder()
+    public Run runThread(String threadId, String instructions, Double temperature, Double topP) {
+        Run runRequest = Run.builder()
                 .assistantId(assistantService.getAssistantId())
-                .temperature(1.0)
-                .topP(0.1)
+                .instructions(instructions)
+                .temperature(Optional.ofNullable(temperature).orElse(defaultTemperature))
+                .topP(Optional.ofNullable(topP).orElse(defaultTopP))
                 .model(model)
                 .build();
 
         return openaiRestClient.post()
                 .uri(threadUrl + "/" + threadId + "/runs")
                 .body(runRequest)
+                .retrieve()
+                .body(Run.class);
+    }
+
+    public Run getRunStatus(String threadId, String runId) {
+        return openaiRestClient.get()
+                .uri(threadUrl + "/" + threadId + "/runs/" + runId)
                 .retrieve()
                 .body(Run.class);
     }

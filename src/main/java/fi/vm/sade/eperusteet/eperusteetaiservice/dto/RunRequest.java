@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class RunRequest {
     @JsonProperty("assistant_id")
     private String assistantId;
+    private String instructions;
     private String model;
     private Double temperature;
     @JsonProperty("top_p")

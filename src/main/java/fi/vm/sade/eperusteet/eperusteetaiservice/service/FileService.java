@@ -3,6 +3,7 @@ package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.OpenAiFile;
+import fi.vm.sade.eperusteet.eperusteetaiservice.util.PdfFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -44,7 +45,7 @@ public class FileService {
 
     private Optional<OpenAiFile> findFile(LahdeTyyppi lahdeTyyppi, Long id) {
         return getFiles().stream()
-                .filter(file -> file.getFilename().equals(lahdeTyyppi.toString().toLowerCase() + "_" + id))
+                .filter(file -> file.getFilename().equals(lahdeTyyppi.toString().toLowerCase() + "_" + id + ".pdf"))
                 .findFirst();
     }
 
@@ -54,12 +55,7 @@ public class FileService {
             return fileExists.get();
         }
 
-        File file = getExternalDataService(lahdeTyyppi).getPdf(id, kieli);
-
-        if (file == null) {
-            throw new FileNotFoundException("File not found");
-        }
-
+        File file = getExternalDataService(lahdeTyyppi).getPdf(id, kieli);;
         return upload(file);
     }
 

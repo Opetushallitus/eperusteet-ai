@@ -6,11 +6,13 @@ import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Thread;
 import fi.vm.sade.eperusteet.eperusteetaiservice.service.AssistantService;
 import fi.vm.sade.eperusteet.eperusteetaiservice.service.ThreadService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @RestController()
 @RequestMapping("/chat")
+@Api("Chat")
 public class ChatController {
 
     @Autowired
@@ -28,7 +31,7 @@ public class ChatController {
     @Autowired
     private ThreadService threadService;
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     public Thread createThread() {
         return threadService.createThread();
     }
@@ -38,7 +41,7 @@ public class ChatController {
         return threadService.getMessages(threadId);
     }
 
-    @GetMapping("/add/{threadId}/{lahdeTyyppi}/{id}")
+    @PostMapping("/add/{threadId}/{lahdeTyyppi}/{id}")
     public Message addMessage(
             @PathVariable String threadId,
             @PathVariable String lahdeTyyppi,
@@ -49,9 +52,14 @@ public class ChatController {
         return threadService.addMessageToThread(threadId, LahdeTyyppi.valueOf(lahdeTyyppi.toUpperCase()), id, prompt, kieli);
     }
 
-    @GetMapping("/run/{threadId}")
-    public Run runThread(@PathVariable String threadId) {
-        return threadService.runThread(threadId);
+    @PostMapping("/run/{threadId}")
+    public Run runThread(@PathVariable String threadId, @RequestParam(required = false) String instructions, @RequestParam(required = false) Double temperature, @RequestParam(required = false) Double topP) {
+        return threadService.runThread(threadId, instructions, temperature, topP);
+    }
+
+    @PostMapping("/thread/{threadId}/run/{runId}")
+    public Run getRun(@PathVariable String threadId, @PathVariable String runId) {
+        return threadService.getRunStatus(threadId, runId);
     }
 
 }

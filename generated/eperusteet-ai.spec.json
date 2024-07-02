@@ -16,7 +16,7 @@
   } ],
   "schemes" : [ "https" ],
   "paths" : {
-    "/assistants" : {
+    "/api/assistants" : {
       "get" : {
         "tags" : [ "Assistants" ],
         "operationId" : "getAssistants",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "/chat/add/{threadId}/{lahdeTyyppi}/{id}" : {
+    "/api/chat/add/{threadId}/{lahdeTyyppi}/{id}" : {
       "post" : {
         "tags" : [ "Chat" ],
         "operationId" : "addMessage",
@@ -75,7 +75,7 @@
         }
       }
     },
-    "/chat/create" : {
+    "/api/chat/create" : {
       "post" : {
         "tags" : [ "Chat" ],
         "operationId" : "createThread",
@@ -89,7 +89,7 @@
         }
       }
     },
-    "/chat/messages/{threadId}" : {
+    "/api/chat/messages/{threadId}" : {
       "get" : {
         "tags" : [ "Chat" ],
         "operationId" : "getMessages",
@@ -112,7 +112,7 @@
         }
       }
     },
-    "/chat/run/{threadId}" : {
+    "/api/chat/run/{threadId}" : {
       "post" : {
         "tags" : [ "Chat" ],
         "operationId" : "runThread",
@@ -149,7 +149,7 @@
         }
       }
     },
-    "/chat/thread/{threadId}/run/{runId}" : {
+    "/api/chat/thread/{threadId}/run/{runId}" : {
       "post" : {
         "tags" : [ "Chat" ],
         "operationId" : "getRun",
@@ -174,7 +174,7 @@
         }
       }
     },
-    "/files" : {
+    "/api/files" : {
       "get" : {
         "tags" : [ "Files" ],
         "operationId" : "getFiles",
@@ -191,7 +191,7 @@
         }
       }
     },
-    "/files/upload/{lahdeTyyppi}/{id}" : {
+    "/api/files/upload/{lahdeTyyppi}/{id}" : {
       "post" : {
         "tags" : [ "Files" ],
         "operationId" : "upload",
@@ -223,7 +223,7 @@
         }
       }
     },
-    "/usage" : {
+    "/api/usage" : {
       "get" : {
         "tags" : [ "Usage" ],
         "operationId" : "getUsage",

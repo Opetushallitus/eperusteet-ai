@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @RestController()
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 @Api("Chat")
 public class ChatController {
 

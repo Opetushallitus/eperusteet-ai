@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DokumenttiDto {
-    private Long id;
-    private int julkaisuRevision;
+public class Model {
+    private String id;
+    private boolean defaultModel;
 }

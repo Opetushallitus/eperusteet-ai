@@ -1,5 +1,6 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
+import fi.vm.sade.eperusteet.eperusteetaiservice.config.AppPreferences;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
@@ -29,6 +30,9 @@ public class ThreadService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private AppPreferences appPreferences;
+
     @Value("${openai.api.threads.url}")
     private String threadUrl;
 
@@ -36,7 +40,7 @@ public class ThreadService {
     private String messagesUrl;
 
     @Value("${openai.model}")
-    private String model;
+    private String defaultModel;
 
     @Value("${openai.api.default.temperature}")
     private Double defaultTemperature;
@@ -51,10 +55,12 @@ public class ThreadService {
                 .body(Thread.class);
     }
 
-    public Message addMessageToThread(String threadId, LahdeTyyppi lahdeTyyppi, Long id, String prompt, String kieli) throws IOException {
-        String fileId = fileService.upload(lahdeTyyppi, id, kieli).getId();
-        RunMessage message = new RunMessage(prompt, fileId);
+    public Message addMessageToThread(String threadId, String fileId, String prompt) throws IOException {
+        if (!appPreferences.getOpsAiAvailable()) {
+            throw new RuntimeException("OpsAI not available");
+        }
 
+        RunMessage message = new RunMessage(prompt, fileId);
         return openaiRestClient.post()
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .body(message)
@@ -70,13 +76,17 @@ public class ThreadService {
                 .stream().sorted(Comparator.comparing(Message::getCreatedAt)).toList();
     }
 
-    public Run runThread(String threadId, String instructions, Double temperature, Double topP) {
+    public Run runThread(String threadId, String model, String instructions, Double temperature, Double topP) {
+        if (!appPreferences.getOpsAiAvailable()) {
+            throw new RuntimeException("OpsAI not available");
+        }
+
         Run runRequest = Run.builder()
                 .assistantId(assistantService.getAssistantId())
                 .instructions(instructions)
                 .temperature(Optional.ofNullable(temperature).orElse(defaultTemperature))
                 .topP(Optional.ofNullable(topP).orElse(defaultTopP))
-                .model(model)
+                .model(Optional.ofNullable(model).orElse(defaultModel))
                 .build();
 
         return openaiRestClient.post()

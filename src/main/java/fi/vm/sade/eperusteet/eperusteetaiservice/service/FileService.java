@@ -3,7 +3,8 @@ package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.OpenAiFile;
-import fi.vm.sade.eperusteet.eperusteetaiservice.util.PdfFileNotFoundException;
+import fi.vm.sade.eperusteet.eperusteetaiservice.util.PdfFileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,12 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class FileService {
 
     @Autowired
@@ -43,19 +44,21 @@ public class FileService {
                 .body(new ParameterizedTypeReference<DataList<OpenAiFile>>() {}).getData();
     }
 
-    private Optional<OpenAiFile> findFile(LahdeTyyppi lahdeTyyppi, Long id) {
+    private Optional<OpenAiFile> findFile(LahdeTyyppi lahdeTyyppi, Long id, String kieli, Integer revision) {
         return getFiles().stream()
-                .filter(file -> file.getFilename().equals(lahdeTyyppi.toString().toLowerCase() + "_" + id + ".pdf"))
+                .filter(file -> file.getFilename().equals(PdfFileUtils.generateFileName(lahdeTyyppi.toString().toLowerCase(), id,  kieli, revision)))
                 .findFirst();
     }
 
-    public OpenAiFile upload(LahdeTyyppi lahdeTyyppi, Long id, String kieli) throws IOException {
-        Optional<OpenAiFile> fileExists = findFile(lahdeTyyppi, id);
+    public OpenAiFile upload(LahdeTyyppi lahdeTyyppi, Long id, String kieli, Integer revision) throws IOException {
+        log.info("uploading file: {}, {}, {}, {}", lahdeTyyppi, id, kieli, revision);
+        Optional<OpenAiFile> fileExists = findFile(lahdeTyyppi, id, kieli, revision);
+        log.info("fileExists: {}", fileExists.isPresent());
         if (fileExists.isPresent()) {
             return fileExists.get();
         }
 
-        File file = getExternalDataService(lahdeTyyppi).getPdf(id, kieli);;
+        File file = getExternalDataService(lahdeTyyppi).getPdf(id, kieli, revision);
         return upload(file);
     }
 

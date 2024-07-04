@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/files")
-@Api("Files")
-public class FilesController {
+@RequestMapping("/api/file")
+@Api("File")
+public class FileController {
 
     @Autowired
     private FileService fileService;
@@ -27,9 +26,13 @@ public class FilesController {
         return fileService.getFiles();
     }
 
-    @PostMapping("/upload/{lahdeTyyppi}/{id}")
-    public OpenAiFile upload(@PathVariable String lahdeTyyppi, @PathVariable Long id, @RequestParam(defaultValue = "fi") String kieli) throws Exception {
-        return fileService.upload(LahdeTyyppi.valueOf(lahdeTyyppi.toUpperCase()), id, kieli);
+    @PostMapping("/upload/{lahdeTyyppi}/{id}/{kieli}/{revision}")
+    public OpenAiFile upload(
+            @PathVariable String lahdeTyyppi,
+            @PathVariable Long id,
+            @PathVariable String kieli,
+            @PathVariable Integer revision) throws Exception {
+        return fileService.upload(LahdeTyyppi.valueOf(lahdeTyyppi.toUpperCase()), id, kieli, revision);
     }
 
 }

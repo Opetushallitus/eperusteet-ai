@@ -41,20 +41,23 @@ public class ChatController {
         return threadService.getMessages(threadId);
     }
 
-    @PostMapping("/add/{threadId}/{lahdeTyyppi}/{id}")
+    @PostMapping("/add/{threadId}/{fileId}")
     public Message addMessage(
             @PathVariable String threadId,
-            @PathVariable String lahdeTyyppi,
-            @PathVariable Long id,
-            @RequestParam String prompt,
-            @RequestParam(defaultValue = "fi") String kieli
+            @PathVariable String fileId,
+            @RequestParam String prompt
     ) throws Exception {
-        return threadService.addMessageToThread(threadId, LahdeTyyppi.valueOf(lahdeTyyppi.toUpperCase()), id, prompt, kieli);
+        return threadService.addMessageToThread(threadId, fileId, prompt);
     }
 
     @PostMapping("/run/{threadId}")
-    public Run runThread(@PathVariable String threadId, @RequestParam(required = false) String instructions, @RequestParam(required = false) Double temperature, @RequestParam(required = false) Double topP) {
-        return threadService.runThread(threadId, instructions, temperature, topP);
+    public Run runThread(
+            @PathVariable String threadId,
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) String instructions,
+            @RequestParam(required = false) Double temperature,
+            @RequestParam(required = false) Double topP) {
+        return threadService.runThread(threadId, model, instructions, temperature, topP);
     }
 
     @PostMapping("/thread/{threadId}/run/{runId}")

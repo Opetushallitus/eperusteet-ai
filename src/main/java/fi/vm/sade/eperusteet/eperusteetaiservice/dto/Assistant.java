@@ -14,6 +14,7 @@ public class Assistant {
     private String name;
     private String instructions;
     private Double temperature;
+    private String model;
     @JsonProperty("top_p")
     private Double topP;
 }

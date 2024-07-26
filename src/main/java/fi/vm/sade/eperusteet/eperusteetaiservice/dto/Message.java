@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,8 +19,8 @@ public class Message {
     private String createdAt;
     private String status;
     private String role;
-    private List<MessageContent> content;
-    private List<Attachment> attachments;
+    private List<MessageContent> content = new ArrayList<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
     public Message(String promt, String fileId) {
         this.role = "user";

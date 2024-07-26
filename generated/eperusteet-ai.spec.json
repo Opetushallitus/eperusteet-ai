@@ -14,6 +14,8 @@
   }, {
     "name" : "File"
   }, {
+    "name" : "History"
+  }, {
     "name" : "Model"
   }, {
     "name" : "Usage"
@@ -178,7 +180,7 @@
       }
     },
     "/api/chat/thread/{threadId}/run/{runId}" : {
-      "post" : {
+      "get" : {
         "tags" : [ "Chat" ],
         "operationId" : "getRun",
         "parameters" : [ {
@@ -256,6 +258,43 @@
         }
       }
     },
+    "/api/history" : {
+      "get" : {
+        "tags" : [ "History" ],
+        "operationId" : "getHistory",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/HistoryDto"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "History" ],
+        "operationId" : "addHistory",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/Message"
+            }
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
     "/api/model" : {
       "get" : {
         "tags" : [ "Model" ],
@@ -328,6 +367,32 @@
           }
         },
         "file_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "HistoryDto" : {
+      "type" : "object",
+      "properties" : {
+        "threadId" : {
+          "type" : "string"
+        },
+        "sourceType" : {
+          "type" : "string"
+        },
+        "sourceId" : {
+          "type" : "string"
+        },
+        "sourceLanguage" : {
+          "type" : "string"
+        },
+        "sourceRevision" : {
+          "type" : "string"
+        },
+        "prompt" : {
+          "type" : "string"
+        },
+        "answer" : {
           "type" : "string"
         }
       }

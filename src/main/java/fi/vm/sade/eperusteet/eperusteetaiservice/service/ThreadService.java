@@ -2,11 +2,11 @@ package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
 import fi.vm.sade.eperusteet.eperusteetaiservice.config.AppPreferences;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.RunMessage;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Thread;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ThreadService {
 
     @Autowired
@@ -69,11 +70,23 @@ public class ThreadService {
     }
 
     public List<Message> getMessages(String threadId) {
+        String messages = openaiRestClient.get()
+                .uri(threadUrl + "/" + threadId + "/messages")
+                .retrieve()
+                .body(String.class);
+
+        log.debug("messages: {}", messages);
+
         return openaiRestClient.get()
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .retrieve()
                 .body(new ParameterizedTypeReference<DataList<Message>>() {}).getData()
-                .stream().sorted(Comparator.comparing(Message::getCreatedAt)).toList();
+                .stream()
+                .peek(message -> message.setContent(message.getContent().stream().peek(content -> content.getText().setValue(content.getText().getValue()
+                        .replaceAll("(?:【[^】]*】)*", "")
+                        .replaceAll("\\*\\*", "")))
+                        .toList()))
+                .sorted(Comparator.comparing(Message::getCreatedAt)).toList();
     }
 
     public Run runThread(String threadId, String model, String instructions, Double temperature, Double topP) {

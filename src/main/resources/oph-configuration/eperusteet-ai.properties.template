@@ -4,3 +4,8 @@
 
 environment.url={{host_ilb}}
 openai.api.key={{openai_api_key}}
+
+host_postgresql_eperusteet_ai={{host_postgresql_eperusteet_ai}}
+host_postgresql_eperusteet_ai_port={{host_postgresql_eperusteet_ai_port}}
+host_postgresql_eperusteet_ai_user={{postgres_app_user}}
+host_postgresql_eperusteet_ai_password={{host_postgresql_eperusteet_ai_app_password}}

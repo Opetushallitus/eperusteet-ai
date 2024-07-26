@@ -60,7 +60,7 @@ public class ChatController {
         return threadService.runThread(threadId, model, instructions, temperature, topP);
     }
 
-    @PostMapping("/thread/{threadId}/run/{runId}")
+    @GetMapping("/thread/{threadId}/run/{runId}")
     public Run getRun(@PathVariable String threadId, @PathVariable String runId) {
         return threadService.getRunStatus(threadId, runId);
     }

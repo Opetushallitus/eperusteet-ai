@@ -44,6 +44,17 @@ public class FileService {
                 .body(new ParameterizedTypeReference<DataList<OpenAiFile>>() {}).getData();
     }
 
+    public Optional<OpenAiFile> getFile(String fileId) {
+        if (fileId == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(openaiRestClient.get()
+                .uri(filesUrl + "/" + fileId)
+                .retrieve()
+                .body(OpenAiFile.class));
+    }
+
     private Optional<OpenAiFile> findFile(LahdeTyyppi lahdeTyyppi, Long id, String kieli, Integer revision) {
         return getFiles().stream()
                 .filter(file -> file.getFilename().equals(PdfFileUtils.generateFileName(lahdeTyyppi.toString().toLowerCase(), id,  kieli, revision)))

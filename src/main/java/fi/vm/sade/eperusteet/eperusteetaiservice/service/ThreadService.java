@@ -1,6 +1,5 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
-import fi.vm.sade.eperusteet.eperusteetaiservice.config.AppPreferences;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
@@ -32,7 +31,7 @@ public class ThreadService {
     private FileService fileService;
 
     @Autowired
-    private AppPreferences appPreferences;
+    private AppPreferenceService appPreferenceService;
 
     @Value("${openai.api.threads.url}")
     private String threadUrl;
@@ -57,7 +56,7 @@ public class ThreadService {
     }
 
     public Message addMessageToThread(String threadId, String fileId, String prompt) throws IOException {
-        if (!appPreferences.getOpsAiAvailable()) {
+        if (!appPreferenceService.isOpsAiAvailable()) {
             throw new RuntimeException("OpsAI not available");
         }
 
@@ -90,7 +89,7 @@ public class ThreadService {
     }
 
     public Run runThread(String threadId, String model, String instructions, Double temperature, Double topP) {
-        if (!appPreferences.getOpsAiAvailable()) {
+        if (!appPreferenceService.isOpsAiAvailable()) {
             throw new RuntimeException("OpsAI not available");
         }
 

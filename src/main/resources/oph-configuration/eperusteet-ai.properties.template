@@ -9,3 +9,4 @@ host_postgresql_eperusteet_ai={{host_postgresql_eperusteet_ai}}
 host_postgresql_eperusteet_ai_port={{host_postgresql_eperusteet_ai_port}}
 host_postgresql_eperusteet_ai_user={{postgres_app_user}}
 host_postgresql_eperusteet_ai_password={{host_postgresql_eperusteet_ai_app_password}}
+environment={{server_name}}

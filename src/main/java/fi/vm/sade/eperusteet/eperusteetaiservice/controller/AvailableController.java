@@ -1,10 +1,9 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.controller;
 
-import fi.vm.sade.eperusteet.eperusteetaiservice.config.AppPreferences;
+import fi.vm.sade.eperusteet.eperusteetaiservice.service.AppPreferenceService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,15 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AvailableController {
 
     @Autowired
-    private AppPreferences appPreferences;
+    private AppPreferenceService appPreferenceService;
 
     @GetMapping
     public boolean getIsOpsAiAvailable() {
-        return appPreferences.getOpsAiAvailable();
+        return appPreferenceService.isOpsAiAvailable();
     }
 
-    @GetMapping("/set/{opsAiAvailable}")
-    public void setIsOpsAiAvailable(@PathVariable boolean opsAiAvailable) {
-        appPreferences.setOpsAiAvailable(opsAiAvailable);
-    }
 }

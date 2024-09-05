@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS history;
+
 CREATE TABLE history (
    id SERIAL PRIMARY KEY,
    message_id VARCHAR(255),

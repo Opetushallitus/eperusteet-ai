@@ -23,17 +23,16 @@ public class ModelService {
     @Value("${openai.model}")
     private String defaultModel;
 
-    public List<String> getModels() {
-        return Arrays.asList(defaultModel, "gpt-4o-mini");
-//        return openaiRestClient.get()
-//                .uri(modelsUrl)
-//                .retrieve()
-//                .body(new ParameterizedTypeReference<DataList<Model>>() {})
-//                .getData()
-//                .stream().peek(model -> {
-//                    if (model.getId().equals(defaultModel)) {
-//                        model.setDefaultModel(true);
-//                    }
-//                }).toList();
+    public List<Model> getModels() {
+        return openaiRestClient.get()
+                .uri(modelsUrl)
+                .retrieve()
+                .body(new ParameterizedTypeReference<DataList<Model>>() {})
+                .getData()
+                .stream().peek(model -> {
+                    if (model.getId().equals(defaultModel)) {
+                        model.setDefaultModel(true);
+                    }
+                }).toList();
     }
 }

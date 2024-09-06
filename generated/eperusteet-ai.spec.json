@@ -53,23 +53,6 @@
         }
       }
     },
-    "/api/available/set/{opsAiAvailable}" : {
-      "get" : {
-        "tags" : [ "Available" ],
-        "operationId" : "setIsOpsAiAvailable",
-        "parameters" : [ {
-          "name" : "opsAiAvailable",
-          "in" : "path",
-          "required" : true,
-          "type" : "boolean"
-        } ],
-        "responses" : {
-          "default" : {
-            "description" : "successful operation"
-          }
-        }
-      }
-    },
     "/api/chat/add/{threadId}/{fileId}" : {
       "post" : {
         "tags" : [ "Chat" ],
@@ -305,7 +288,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "type" : "string"
+                "$ref" : "#/definitions/Model"
               }
             }
           }
@@ -374,7 +357,17 @@
     "HistoryDto" : {
       "type" : "object",
       "properties" : {
+        "messageId" : {
+          "type" : "string"
+        },
         "threadId" : {
+          "type" : "string"
+        },
+        "createdAt" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "role" : {
           "type" : "string"
         },
         "sourceType" : {
@@ -389,10 +382,7 @@
         "sourceRevision" : {
           "type" : "string"
         },
-        "prompt" : {
-          "type" : "string"
-        },
-        "answer" : {
+        "content" : {
           "type" : "string"
         }
       }
@@ -445,6 +435,17 @@
       "properties" : {
         "value" : {
           "type" : "string"
+        }
+      }
+    },
+    "Model" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "defaultModel" : {
+          "type" : "boolean"
         }
       }
     },

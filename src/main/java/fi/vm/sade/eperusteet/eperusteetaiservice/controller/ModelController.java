@@ -19,7 +19,7 @@ public class ModelController {
     private ModelService modelService;
 
     @GetMapping
-    public List<String> getModels() {
+    public List<Model> getModels() {
         return modelService.getModels();
     }
 }

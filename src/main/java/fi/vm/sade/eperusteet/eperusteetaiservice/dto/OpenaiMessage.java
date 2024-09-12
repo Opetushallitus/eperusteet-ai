@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
+public class OpenaiMessage {
     private String id;
     @JsonProperty("thread_id")
     private String threadId;
@@ -21,10 +21,4 @@ public class Message {
     private String role;
     private List<MessageContent> content = new ArrayList<>();
     private List<Attachment> attachments = new ArrayList<>();
-
-    public Message(String promt, String fileId) {
-        this.role = "user";
-        this.content = List.of(new MessageContent("text", new MessageText(promt)));
-        this.attachments = List.of(new Attachment(fileId, List.of(new Tool("file_search"))));
-    }
 }

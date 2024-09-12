@@ -1,10 +1,12 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.MessageDto;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.OpenaiMessage;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.RunMessage;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Thread;
+import fi.vm.sade.eperusteet.eperusteetaiservice.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +17,10 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -55,7 +60,7 @@ public class ThreadService {
                 .body(Thread.class);
     }
 
-    public Message addMessageToThread(String threadId, String fileId, String prompt) throws IOException {
+    public OpenaiMessage addMessageToThread(String threadId, String fileId, String prompt) throws IOException {
         if (!appPreferenceService.isOpsAiAvailable()) {
             throw new RuntimeException("OpsAI not available");
         }
@@ -65,27 +70,25 @@ public class ThreadService {
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .body(message)
                 .retrieve()
-                .body(Message.class);
+                .body(OpenaiMessage.class);
     }
 
-    public List<Message> getMessages(String threadId) {
+    public List<OpenaiMessage> getMessages(String threadId) {
         String messages = openaiRestClient.get()
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .retrieve()
                 .body(String.class);
-
         log.debug("messages: {}", messages);
-
         return openaiRestClient.get()
                 .uri(threadUrl + "/" + threadId + "/messages")
                 .retrieve()
-                .body(new ParameterizedTypeReference<DataList<Message>>() {}).getData()
+                .body(new ParameterizedTypeReference<DataList<OpenaiMessage>>() {}).getData()
                 .stream()
                 .peek(message -> message.setContent(message.getContent().stream().peek(content -> content.getText().setValue(content.getText().getValue()
                         .replaceAll("(?:【[^】]*】)*", "")
                         .replaceAll("\\*\\*", "")))
                         .toList()))
-                .sorted(Comparator.comparing(Message::getCreatedAt)).toList();
+                .sorted(Comparator.comparing(OpenaiMessage::getCreatedAt)).toList();
     }
 
     public Run runThread(String threadId, String model, String instructions, Double temperature, Double topP) {

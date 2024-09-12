@@ -1,6 +1,5 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +17,5 @@ public class Thread {
     @JsonProperty("created_at")
     private Integer createdAt;
 
-    private List<Message> messages;
+    private List<OpenaiMessage> messages;
 }

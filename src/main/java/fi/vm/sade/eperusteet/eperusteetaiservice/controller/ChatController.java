@@ -1,22 +1,18 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.controller;
 
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
-import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Message;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.OpenaiMessage;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Run;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.Thread;
 import fi.vm.sade.eperusteet.eperusteetaiservice.service.AssistantService;
 import fi.vm.sade.eperusteet.eperusteetaiservice.service.ThreadService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -37,12 +33,12 @@ public class ChatController {
     }
 
     @GetMapping("/messages/{threadId}")
-    public List<Message> getMessages(@PathVariable String threadId) {
+    public List<OpenaiMessage> getThreadMessages(@PathVariable String threadId) {
         return threadService.getMessages(threadId);
     }
 
     @PostMapping("/add/{threadId}/{fileId}")
-    public Message addMessage(
+    public OpenaiMessage addMessageToThread(
             @PathVariable String threadId,
             @PathVariable String fileId,
             @RequestParam String prompt

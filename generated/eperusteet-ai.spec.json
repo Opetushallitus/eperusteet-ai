@@ -14,7 +14,7 @@
   }, {
     "name" : "File"
   }, {
-    "name" : "History"
+    "name" : "Message"
   }, {
     "name" : "Model"
   }, {
@@ -56,7 +56,7 @@
     "/api/chat/add/{threadId}/{fileId}" : {
       "post" : {
         "tags" : [ "Chat" ],
-        "operationId" : "addMessage",
+        "operationId" : "addMessageToThread",
         "parameters" : [ {
           "name" : "threadId",
           "in" : "path",
@@ -77,7 +77,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/Message"
+              "$ref" : "#/definitions/OpenaiMessage"
             }
           }
         }
@@ -100,7 +100,7 @@
     "/api/chat/messages/{threadId}" : {
       "get" : {
         "tags" : [ "Chat" ],
-        "operationId" : "getMessages",
+        "operationId" : "getThreadMessages",
         "parameters" : [ {
           "name" : "threadId",
           "in" : "path",
@@ -113,7 +113,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/Message"
+                "$ref" : "#/definitions/OpenaiMessage"
               }
             }
           }
@@ -241,25 +241,69 @@
         }
       }
     },
-    "/api/history" : {
+    "/api/messages" : {
       "get" : {
-        "tags" : [ "History" ],
-        "operationId" : "getHistory",
+        "tags" : [ "Message" ],
+        "operationId" : "getMessages",
+        "parameters" : [ {
+          "name" : "startDate",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
+          "name" : "sourceType",
+          "in" : "query",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          },
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "educationLevel",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "hasFeedbackOnly",
+          "in" : "query",
+          "required" : false,
+          "type" : "boolean",
+          "default" : false
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        }, {
+          "name" : "pagesize",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/HistoryDto"
-              }
+              "$ref" : "#/definitions/PageThreadMessagesDto"
             }
           }
         }
       },
       "post" : {
-        "tags" : [ "History" ],
-        "operationId" : "addHistory",
+        "tags" : [ "Message" ],
+        "operationId" : "addMessage",
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
@@ -267,13 +311,63 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/definitions/Message"
+              "$ref" : "#/definitions/MessageDto"
             }
           }
         } ],
         "responses" : {
           "default" : {
             "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/api/messages/feedback/{messageId}" : {
+      "post" : {
+        "tags" : [ "Message" ],
+        "operationId" : "addFeedback",
+        "parameters" : [ {
+          "name" : "messageId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/FeedbackDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/FeedbackDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/thread/{threadId}" : {
+      "get" : {
+        "tags" : [ "Message" ],
+        "operationId" : "getMessagesByThreadId",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/MessageDto"
+              }
+            }
           }
         }
       }
@@ -354,7 +448,30 @@
         }
       }
     },
-    "HistoryDto" : {
+    "FeedbackDto" : {
+      "type" : "object",
+      "properties" : {
+        "result" : {
+          "type" : "string",
+          "enum" : [ "POSITIVE", "NEGATIVE" ]
+        },
+        "comment" : {
+          "type" : "string"
+        }
+      }
+    },
+    "MessageContent" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "text" : {
+          "$ref" : "#/definitions/MessageText"
+        }
+      }
+    },
+    "MessageDto" : {
       "type" : "object",
       "properties" : {
         "messageId" : {
@@ -370,63 +487,42 @@
         "role" : {
           "type" : "string"
         },
+        "content" : {
+          "type" : "string"
+        },
+        "meta" : {
+          "$ref" : "#/definitions/MessageMeta"
+        },
+        "feedback" : {
+          "$ref" : "#/definitions/FeedbackDto"
+        }
+      }
+    },
+    "MessageMeta" : {
+      "type" : "object",
+      "properties" : {
+        "educationLevel" : {
+          "type" : "string"
+        },
+        "sourceName" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        },
         "sourceType" : {
           "type" : "string"
         },
         "sourceId" : {
-          "type" : "string"
+          "type" : "integer",
+          "format" : "int32"
         },
         "sourceLanguage" : {
           "type" : "string"
         },
         "sourceRevision" : {
-          "type" : "string"
-        },
-        "content" : {
-          "type" : "string"
-        }
-      }
-    },
-    "Message" : {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "string"
-        },
-        "status" : {
-          "type" : "string"
-        },
-        "role" : {
-          "type" : "string"
-        },
-        "content" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/MessageContent"
-          }
-        },
-        "attachments" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/Attachment"
-          }
-        },
-        "thread_id" : {
-          "type" : "string"
-        },
-        "created_at" : {
-          "type" : "string"
-        }
-      }
-    },
-    "MessageContent" : {
-      "type" : "object",
-      "properties" : {
-        "type" : {
-          "type" : "string"
-        },
-        "text" : {
-          "$ref" : "#/definitions/MessageText"
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -474,6 +570,156 @@
         }
       }
     },
+    "OpenaiMessage" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string"
+        },
+        "role" : {
+          "type" : "string"
+        },
+        "content" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MessageContent"
+          }
+        },
+        "attachments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Attachment"
+          }
+        },
+        "thread_id" : {
+          "type" : "string"
+        },
+        "created_at" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Page" : {
+      "type" : "object",
+      "properties" : {
+        "totalElements" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "totalPages" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "size" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "content" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        },
+        "number" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "sort" : {
+          "$ref" : "#/definitions/Sort"
+        },
+        "numberOfElements" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "first" : {
+          "type" : "boolean"
+        },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
+        },
+        "last" : {
+          "type" : "boolean"
+        },
+        "empty" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "PageThreadMessagesDto" : {
+      "type" : "object",
+      "properties" : {
+        "totalElements" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "totalPages" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "size" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "content" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ThreadMessagesDto"
+          }
+        },
+        "number" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "sort" : {
+          "$ref" : "#/definitions/Sort"
+        },
+        "numberOfElements" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "first" : {
+          "type" : "boolean"
+        },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
+        },
+        "last" : {
+          "type" : "boolean"
+        },
+        "empty" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "Pageable" : {
+      "type" : "object",
+      "properties" : {
+        "offset" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "sort" : {
+          "$ref" : "#/definitions/Sort"
+        },
+        "paged" : {
+          "type" : "boolean"
+        },
+        "unpaged" : {
+          "type" : "boolean"
+        },
+        "pageSize" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "pageNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
     "Run" : {
       "type" : "object",
       "properties" : {
@@ -505,6 +751,20 @@
         }
       }
     },
+    "Sort" : {
+      "type" : "object",
+      "properties" : {
+        "empty" : {
+          "type" : "boolean"
+        },
+        "sorted" : {
+          "type" : "boolean"
+        },
+        "unsorted" : {
+          "type" : "boolean"
+        }
+      }
+    },
     "Thread" : {
       "type" : "object",
       "properties" : {
@@ -514,12 +774,26 @@
         "messages" : {
           "type" : "array",
           "items" : {
-            "$ref" : "#/definitions/Message"
+            "$ref" : "#/definitions/OpenaiMessage"
           }
         },
         "created_at" : {
           "type" : "integer",
           "format" : "int32"
+        }
+      }
+    },
+    "ThreadMessagesDto" : {
+      "type" : "object",
+      "properties" : {
+        "threadId" : {
+          "type" : "string"
+        },
+        "messages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MessageDto"
+          }
         }
       }
     },

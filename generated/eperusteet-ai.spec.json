@@ -523,6 +523,20 @@
         "sourceRevision" : {
           "type" : "integer",
           "format" : "int32"
+        },
+        "instructions" : {
+          "type" : "string"
+        },
+        "temperature" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "model" : {
+          "type" : "string"
+        },
+        "top_p" : {
+          "type" : "number",
+          "format" : "double"
         }
       }
     },
@@ -637,11 +651,11 @@
         "first" : {
           "type" : "boolean"
         },
-        "pageable" : {
-          "$ref" : "#/definitions/Pageable"
-        },
         "last" : {
           "type" : "boolean"
+        },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
         },
         "empty" : {
           "type" : "boolean"
@@ -683,11 +697,11 @@
         "first" : {
           "type" : "boolean"
         },
-        "pageable" : {
-          "$ref" : "#/definitions/Pageable"
-        },
         "last" : {
           "type" : "boolean"
+        },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
         },
         "empty" : {
           "type" : "boolean"
@@ -704,10 +718,10 @@
         "sort" : {
           "$ref" : "#/definitions/Sort"
         },
-        "paged" : {
+        "unpaged" : {
           "type" : "boolean"
         },
-        "unpaged" : {
+        "paged" : {
           "type" : "boolean"
         },
         "pageSize" : {

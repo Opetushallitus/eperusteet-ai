@@ -20,7 +20,7 @@
 		<flyway.version>9.22.3</flyway.version>
 		<commons-io.version>2.16.1</commons-io.version>
 		<jaxb-api.version>2.3.1</jaxb-api.version>
-		<swagger-annotations.version>1.6.14</swagger-annotations.version>
+		<swagger-annotations.version>1.6.15</swagger-annotations.version>
 		<modelmapper.version>3.2.1</modelmapper.version>
 	</properties>
 	<dependencies>

@@ -38,14 +38,14 @@ public class ThreadService {
     @Autowired
     private AppPreferenceService appPreferenceService;
 
+    @Autowired
+    private ModelService modelService;
+
     @Value("${openai.api.threads.url}")
     private String threadUrl;
 
     @Value("${openai.api.messages.url}")
     private String messagesUrl;
-
-    @Value("${openai.model}")
-    private String defaultModel;
 
     @Value("${openai.api.default.temperature}")
     private Double defaultTemperature;
@@ -101,7 +101,7 @@ public class ThreadService {
                 .instructions(instructions)
                 .temperature(Optional.ofNullable(temperature).orElse(defaultTemperature))
                 .topP(Optional.ofNullable(topP).orElse(defaultTopP))
-                .model(Optional.ofNullable(model).orElse(defaultModel))
+                .model(Optional.ofNullable(model).orElse(modelService.getDefaultModelId()))
                 .build();
 
         return openaiRestClient.post()

@@ -22,8 +22,8 @@ public class AssistantService  {
     @Value("${openai.api.assistants.url}")
     private String assistantsUrl;
 
-    @Value("${openai.model}")
-    private String defaultModel;
+    @Autowired
+    private ModelService modelService;
 
     public List<Assistant> getAssistants() {
         return openaiRestClient.get()
@@ -31,7 +31,7 @@ public class AssistantService  {
                 .retrieve()
                 .body(new ParameterizedTypeReference<DataList<Assistant>>() {})
                 .getData()
-                .stream().peek(assistant -> assistant.setModel(defaultModel))
+                .stream().peek(assistant -> assistant.setModel(modelService.getDefaultModelId()))
                 .toList();
     }
 

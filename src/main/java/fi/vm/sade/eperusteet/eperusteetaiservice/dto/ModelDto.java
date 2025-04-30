@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Model {
+public class ModelDto {
     private String id;
     private boolean defaultModel;
+    private String description;
 }

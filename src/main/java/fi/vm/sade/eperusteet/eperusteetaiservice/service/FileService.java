@@ -91,11 +91,15 @@ public class FileService {
         builder.part("file", new FileSystemResource(file)).header("Content-Disposition", "form-data; name=file; filename=" + file.getName());
         builder.part("purpose", "assistants");
 
+        log.info("Uploading file {} to {}", file.getName(), filesUrl);
+
         OpenAiFile openAiFile =  openaiRestClient.post()
                 .uri(filesUrl)
                 .body(builder.build())
                 .retrieve()
                 .body(OpenAiFile.class);
+
+        log.info("file uploaded");
         file.delete();
         return openAiFile;
     }

@@ -44,6 +44,7 @@ public abstract class ExternalService {
 
         File file = new File(PdfFileUtils.generateFileName(getPdfName(), id,  kieli, revision));
         FileUtils.writeByteArrayToFile(file, pdfAsArray);
+        log.info("file fetched from {} with {}", getJulkaistuPdfUrl(), dokumenttiDto.getId());
         return file;
     }
 

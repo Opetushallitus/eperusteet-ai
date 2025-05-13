@@ -1,6 +1,9 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DataList;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.DokumenttiDto;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.FileRequest;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.FileType;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import fi.vm.sade.eperusteet.eperusteetaiservice.dto.OpenAiFile;
 import fi.vm.sade.eperusteet.eperusteetaiservice.util.PdfFileUtils;
@@ -55,21 +58,22 @@ public class FileService {
                 .body(OpenAiFile.class));
     }
 
-    private Optional<OpenAiFile> findFile(LahdeTyyppi lahdeTyyppi, Long id, String kieli, Integer revision) {
+    private Optional<OpenAiFile> findFile(FileRequest fileRequest) {
         return getFiles().stream()
-                .filter(file -> file.getFilename().equals(PdfFileUtils.generateFileName(lahdeTyyppi.toString().toLowerCase(), id,  kieli, revision)))
+                .filter(file -> file.getFilename().equals(PdfFileUtils.generateFileName(fileRequest)))
                 .findFirst();
     }
 
-    public OpenAiFile upload(LahdeTyyppi lahdeTyyppi, Long id, String kieli, Integer revision) throws IOException {
-        log.info("uploading file: {}, {}, {}, {}", lahdeTyyppi, id, kieli, revision);
-        Optional<OpenAiFile> fileExists = findFile(lahdeTyyppi, id, kieli, revision);
+    public OpenAiFile upload(FileRequest fileRequest) throws IOException {
+        log.info("uploading file: {}", fileRequest);
+        Optional<OpenAiFile> fileExists = findFile(fileRequest);
         log.info("fileExists: {}", fileExists.isPresent());
         if (fileExists.isPresent()) {
             return fileExists.get();
         }
 
-        File file = getExternalDataService(lahdeTyyppi).getPdf(id, kieli, revision);
+        File file = getExternalDataService(fileRequest.getLahdeTyyppi())
+                .getFile(fileRequest);
         return upload(file);
     }
 
@@ -102,5 +106,14 @@ public class FileService {
         log.info("file uploaded");
         file.delete();
         return openAiFile;
+    }
+
+    public List<String> getSupportedTypes(FileRequest fileRequest) {
+        DokumenttiDto dokumenttiDto = getExternalDataService(fileRequest.getLahdeTyyppi()).getDokumenttiDto(fileRequest);
+        return dokumenttiDto.getDataTyypit();
+    }
+
+    public String getSourceUrl(FileRequest fileRequest) {
+        return getExternalDataService(fileRequest.getLahdeTyyppi()).getSourceUrl(fileRequest);
     }
 }

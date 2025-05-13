@@ -1,7 +1,11 @@
 package fi.vm.sade.eperusteet.eperusteetaiservice.service;
 
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.FileRequest;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.FileType;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.LahdeTyyppi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class AmosaaExternalService extends ExternalService {
@@ -11,6 +15,9 @@ public class AmosaaExternalService extends ExternalService {
 
     @Value("${amosaa.julkaistu.dokumentti.pdf.url}")
     private String amosaaJulkaistuPdfUrl;
+
+    @Value("${amosaa.julkaistu.dokumentti.html.url}")
+    private String amosaaJulkaistuHtmlUrl;
 
     @Override
     String getDokumenttiDtoUrl() {
@@ -23,7 +30,7 @@ public class AmosaaExternalService extends ExternalService {
     }
 
     @Override
-    String getPdfName() {
-        return "amosaa";
+    String getJulkaistuHtmlUrl() {
+        return amosaaJulkaistuHtmlUrl;
     }
 }

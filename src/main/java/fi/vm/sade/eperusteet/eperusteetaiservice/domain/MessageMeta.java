@@ -2,6 +2,7 @@ package fi.vm.sade.eperusteet.eperusteetaiservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.vm.sade.eperusteet.eperusteetaiservice.dto.FileType;
 import lombok.Data;
 
 import java.util.Map;
@@ -15,6 +16,7 @@ public class MessageMeta {
     private Integer sourceId;
     private String sourceLanguage;
     private Integer sourceRevision;
+    private FileType sourceFileType;
     private String instructions;
     private Double temperature;
     @JsonProperty("top_p")

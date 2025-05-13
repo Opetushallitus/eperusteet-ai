@@ -18,7 +18,7 @@
 		<swagger-maven-plugin-version>3.1.8</swagger-maven-plugin-version>
 		<postgresql.version>42.7.5</postgresql.version>
 		<flyway.version>9.22.3</flyway.version>
-		<commons-io.version>2.18.0</commons-io.version>
+		<commons-io.version>2.19.0</commons-io.version>
 		<jaxb-api.version>2.3.1</jaxb-api.version>
 		<swagger-annotations.version>1.6.15</swagger-annotations.version>
 		<modelmapper.version>3.2.2</modelmapper.version>

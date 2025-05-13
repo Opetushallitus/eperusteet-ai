@@ -204,7 +204,89 @@
         }
       }
     },
-    "/api/file/upload/{lahdeTyyppi}/{id}/{kieli}/{revision}" : {
+    "/api/file/sourceurl/{lahdeTyyppi}/{id}/{kieli}/{revision}/{type}" : {
+      "get" : {
+        "tags" : [ "File" ],
+        "operationId" : "getSourceUrl",
+        "parameters" : [ {
+          "name" : "lahdeTyyppi",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "kieli",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "revision",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "type",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/api/file/supportedtypes/{lahdeTyyppi}/{id}/{kieli}/{revision}" : {
+      "get" : {
+        "tags" : [ "File" ],
+        "operationId" : "getSupportedTypes",
+        "parameters" : [ {
+          "name" : "lahdeTyyppi",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "kieli",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "revision",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/file/upload/{lahdeTyyppi}/{id}/{kieli}/{revision}/{type}" : {
       "post" : {
         "tags" : [ "File" ],
         "operationId" : "upload",
@@ -230,6 +312,11 @@
           "required" : true,
           "type" : "integer",
           "format" : "int32"
+        }, {
+          "name" : "type",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -382,7 +469,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/Model"
+                "$ref" : "#/definitions/ModelDto"
               }
             }
           }
@@ -524,6 +611,10 @@
           "type" : "integer",
           "format" : "int32"
         },
+        "sourceFileType" : {
+          "type" : "string",
+          "enum" : [ "PDF", "HTML" ]
+        },
         "instructions" : {
           "type" : "string"
         },
@@ -548,7 +639,7 @@
         }
       }
     },
-    "Model" : {
+    "ModelDto" : {
       "type" : "object",
       "properties" : {
         "id" : {
@@ -556,6 +647,9 @@
         },
         "defaultModel" : {
           "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
         }
       }
     },
@@ -644,6 +738,9 @@
         "sort" : {
           "$ref" : "#/definitions/Sort"
         },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
+        },
         "numberOfElements" : {
           "type" : "integer",
           "format" : "int32"
@@ -653,9 +750,6 @@
         },
         "last" : {
           "type" : "boolean"
-        },
-        "pageable" : {
-          "$ref" : "#/definitions/Pageable"
         },
         "empty" : {
           "type" : "boolean"
@@ -690,6 +784,9 @@
         "sort" : {
           "$ref" : "#/definitions/Sort"
         },
+        "pageable" : {
+          "$ref" : "#/definitions/Pageable"
+        },
         "numberOfElements" : {
           "type" : "integer",
           "format" : "int32"
@@ -699,9 +796,6 @@
         },
         "last" : {
           "type" : "boolean"
-        },
-        "pageable" : {
-          "$ref" : "#/definitions/Pageable"
         },
         "empty" : {
           "type" : "boolean"
@@ -718,19 +812,19 @@
         "sort" : {
           "$ref" : "#/definitions/Sort"
         },
-        "unpaged" : {
-          "type" : "boolean"
+        "pageNumber" : {
+          "type" : "integer",
+          "format" : "int32"
         },
-        "paged" : {
+        "unpaged" : {
           "type" : "boolean"
         },
         "pageSize" : {
           "type" : "integer",
           "format" : "int32"
         },
-        "pageNumber" : {
-          "type" : "integer",
-          "format" : "int32"
+        "paged" : {
+          "type" : "boolean"
         }
       }
     },
@@ -771,10 +865,10 @@
         "empty" : {
           "type" : "boolean"
         },
-        "sorted" : {
+        "unsorted" : {
           "type" : "boolean"
         },
-        "unsorted" : {
+        "sorted" : {
           "type" : "boolean"
         }
       }

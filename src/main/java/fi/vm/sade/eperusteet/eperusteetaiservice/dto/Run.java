@@ -24,4 +24,5 @@ public class Run {
     private Double temperature;
     @JsonProperty("top_p")
     private Double topP;
+    private Object last_error;
 }

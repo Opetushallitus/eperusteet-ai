@@ -21,7 +21,7 @@
 		<commons-io.version>2.18.0</commons-io.version>
 		<jaxb-api.version>2.3.1</jaxb-api.version>
 		<swagger-annotations.version>1.6.15</swagger-annotations.version>
-		<modelmapper.version>3.2.2</modelmapper.version>
+		<modelmapper.version>3.2.3</modelmapper.version>
 	</properties>
 	<dependencies>
 		<dependency>
